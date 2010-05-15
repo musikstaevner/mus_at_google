@@ -38,31 +38,13 @@ class FormHandler(InboundMailHandler):
 
         elev.put()
 
-    def fix_encoding(self, message):
-    
-        if hasattr(message, 'body'):
-            if isinstance(message.body, EncodedPayload):
-                _log.debug(message.body.encoding)
-                if message.body.encoding == '8bit':
-                    message.body.encoding = '7bit' 
-                    _log.debug('Body encoding fixed')
-                    
-        if hasattr(message, 'html'):    
-            if isinstance(message.html, EncodedPayload):
-                _log.debug(message.html.encoding)    
-                if message.html.encoding == '8bit':
-                    message.html.encoding = '7bit' 
-                    _log.debug('HTML encoding fixed')
-        if hasattr(message, 'attachments'):
-            for file_name, data in _attachment_sequence(message.attachments):
-                if isinstance(data, EncodedPayload):
-                    _log.debug(data.encoding)
-                    if data.encoding == '8bit':
-                        data.encoding = '7bit'
-                        _log.debug('Attachment encoding fixed')
-        return message
 
-
+    def to_unicode_or_bust(self, obj, encoding='utf-8'):
+        if isinstance(obj, basestring):
+            if not isinstance(obj, unicode):
+                obj = unicode(obj, encoding)
+                logging.info("fixed missing unicode")
+        return obj
 
 
     def receive(self, mail_message):
@@ -72,34 +54,35 @@ class FormHandler(InboundMailHandler):
         
         state = Header
 
-        #mail_message = self.fix_encoding(mail_message)
-        logging.info("mail_message= " + type(mail_message).__name__)
-        logging.info("EncodedPayload encoding= " + str(mail_message.body.encoding))
+        logging.debug("mail_message= " + type(mail_message).__name__)
+        logging.debug("EncodedPayload encoding= " + str(mail_message.body.encoding))
+        logging.debug("body type= " + type(mail_message.body).__name__)
+
+        ## curcomvent bug in google api, not sure it is a safe way
         if mail_message.body.encoding == '8bit':
             mail_message.body.encoding = '7bit' 
-            logging.debug('Body encoding fixed')
+            logging.info('Body encoding fixed')
 
         logging.info("Received a message from: "
                      + mail_message.sender
                      + " who wrote "
                      + mail_message.body.decode())
 
-        #fetch the letter
-        logging.info("body= " + type(mail_message.body).__name__)
-
-        logging.info("body_decoded= "
-                     + type(mail_message.body.decode()).__name__)
         
+        #we will parse the letter line for line
         lines = mail_message.body.decode().splitlines()
 
-        logging.info("lines= " + type(lines).__name__)
+        logging.debug("lines type= " + type(lines).__name__)
 
-        for utf8line in lines:
-            logging.info("utf8line= " + type(utf8line).__name__)
+        # some version of google dev serber has an error
+        # that deliveres str instead of uniciode. Fix that
+        for line_itr in range(0, len(lines)):
+            lines[line_itr] = to_unicode_or_bust(lines[line_itr])
 
-            #line = unicode(utf8line, 'utf-8')
-            line = utf8line
-            logging.info( "DEBUG:" + line)
+        for line in lines:
+            logging.debug("line= " + type(line).__name__)
+
+            logging.debug( "DEBUG:" + line)
 
             
             #skip blanks
@@ -110,7 +93,7 @@ class FormHandler(InboundMailHandler):
             if line.find("- Info om") >=  0: continue
             if line.find("Emne: Til") >=  0: continue
 
-            #as long as we havent  seen the first "navn:"
+            #as long as we haven't  seen the first "navn:"
             # we are sill in the header and just skips ahead
             if state == Header:
                 if line.find("navn:") < 0:
