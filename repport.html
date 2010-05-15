@@ -1,0 +1,24 @@
+<!-- Unusual layout is to ensure template is useful with tags stripped, too -->
+<html><head><title>Tilmeldings status</title></head>
+<body><p>tilmeldte: {{tilmeldt_count}} heraf har {{betalt_count}} betalt.</p>
+
+<table>
+<tr><td></td><td>navn</td><td>adresse</td><td>cpr. nummeer</td><td>e-post</td><td>telefon</td><td>instrument</td><td>Enerum<br>Søskende Rabat</td><td>besked</td><td>tilmeldt dato</td><td>betalt</td><td>noter</td></tr>
+{% for id in elevInfo %}
+<tr>
+<th>elev<br>værge</th>
+<td>{{id.ElevNavn}}ff<br>{{id.ForaeldreNavn}}</td>
+<td>{{id.ElevAdresse}}, {{id.ElevPostBy}}<br>{{id.ForaeldreAdresse}}, {{id.ForaeldrePostBy}}</tr>
+<td>{{id.ElevCpr}}</td>
+<td>{{id.ElevEpost}}<br>{{id.ForaeldreEpost}}</td>
+<td>{{id.ElevMobil}}<br>{{id.ForaeldreFsstnet}}<br>{{id.ForaeldreMobil}}</td>
+<td>{{id.ElevInstrument}}<br>{{id.ElevNiveau}}</td>
+<td>{{id.ElevEnerum}}<br>{{id.ElevSRabat}}</td>
+<td>{{id.Besked}}</td>
+<td>{{id.Betalt}}</td>
+<td>{{id.Note}}</td>
+</tr>
+{% endfor %}
+</table>
+</body>
+</html>
