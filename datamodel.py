@@ -21,3 +21,23 @@ class ElevInfo(db.Model):
       ForaeldrMobil = db.StringProperty()
       Besked = db.StringProperty(multiline=True)
       TilmeldtDate = db.DateTimeProperty(auto_now_add=True)
+
+
+class TransportData(db.Model):
+      Navn = db.StringProperty()
+      Epost = db.StringProperty()
+      From = db.StringProperty()
+      To = db.StringProperty()
+      Besked = db.StringProperty(multiline=True)
+      TilmeldtDate = db.DateTimeProperty(auto_now_add=True)
+
+class AfslutData(db.Model):
+      Navn = db.StringProperty()
+      Epost = db.StringProperty()
+      Aftensmad = db.IntegerProperty()
+      Aftenskaffe = db.IntegerProperty()
+      Overnatning = db.IntegerProperty()
+      Mokost = db.IntegerProperty()
+      Pris = db.IntegerProperty()
+      Besked = db.StringProperty(multiline=True)
+      TilmeldtDate = db.DateTimeProperty(auto_now_add=True)
