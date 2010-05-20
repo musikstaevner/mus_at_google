@@ -275,12 +275,12 @@ MVH fr. robot
             # so check if we need to change state
             # first see if we are in the "Besked" part, then do not search keywords
             if state < Tbesked:
-                if line.find("E-post:") >=  0: state = Tepost ; continue
-                if line.find("Til") >=  0: state = ToOlle ; continue
-                if line.find("r P") >=  0: state = OnStation ; continue
-                if line.find("Fra") >=  0: state = FromOlle ; continue
-                if line.find("r AF") >=  0: state = OffStation ; continue
-                if line.find("Evt. besked") >=  0: state = Tbesked ; continue
+                if line.find(u"E-post:") >=  0: state = Tepost ; continue
+                if line.find(u"Til") >=  0: state = ToOlle ; continue
+                if line.find(u"r P") >=  0: state = OnStation ; continue
+                if line.find(u"Fra") >=  0: state = FromOlle ; continue
+                if line.find(u"r AF") >=  0: state = OffStation ; continue
+                if line.find(u"Evt. besked") >=  0: state = Tbesked ; continue
 
 
             # When get here we have a data line, the state tels us where to store the data
@@ -365,13 +365,13 @@ Vi har modtaget følgende tilmelding
         
             
         if tdata.has_key(Tbesked):
-            Tbesked_txt = ( "\nNB. vi modtog også denne besked fra dig\n"
+            Tbesked_txt = ( u"\nNB. vi modtog også denne besked fra dig\n"
                             '"%s"\n' % tdata[Tbesked])
-            Tbesked_info = ("\nder var også denne besked\n"
+            Tbesked_info = (u"\nder var også denne besked\n"
                             '"%s"\n' % tdata[Tbesked])
         else:
-            Tbesked_txt = ""
-            Tbesked_info = ""
+            Tbesked_txt = u""
+            Tbesked_info = u""
         
         Tfoot_txt = u"""
 Prisen kan variere efter antal og afstand men plejer at ligge i omegnen af 200 kr.
@@ -385,7 +385,7 @@ MVH fr. robot
 Du modtager dette brev fordi vi har modtaget en tilmelding på http://musikstaevner.dk, hvis dette skulle være en fejl må du meget gerne lade os det vide på tilmelding@musikstaevner.dk
         """ % Tbesked_txt
         
-        Tfoot_info = "%s-- \nMVH fr. robot\n" % Tbesked_info
+        Tfoot_info = u"%s-- \nMVH fr. robot\n" % Tbesked_info
 
         
         tmessage = mail.EmailMessage(sender="robot@musikstaevner.dk",
@@ -434,7 +434,7 @@ Du modtager dette brev fordi vi har modtaget en tilmelding på http://musikstaevn
             #as long as we haven't  seen the first "navn:"
             # we are sill in the header and just skips ahead
             if state == AHeader:
-                if line.find("Navn:") < 0:
+                if line.find(u"Navn:") < 0:
                     continue
                 else:
                     state = Anavn
@@ -506,7 +506,7 @@ Du modtager dette brev fordi vi har modtaget en tilmelding på http://musikstaevn
         if tdata.has_key(Tbesked):
             afslut_d.Besked  =  adata[Abesked][:500]
         else:
-            afslut_d.Besked  = ""
+            afslut_d.Besked  = u""
         
         afslut_d.put()
 
@@ -533,14 +533,14 @@ Vi har modtaget følgende:
             afslut_data_txt +=u"%s til Mokost\n" % adata[Mokost]
             
         if adata.has_key(Abesked):
-            Abesked_txt = ( "\nNB. vi modtog også denne besked fra dig\n"
+            Abesked_txt = ( u"\nNB. vi modtog også denne besked fra dig\n"
                             '"%s"\n' % adata[Abesked])
-            Abesked_info = ("\nder var også denne besked\n"
+            Abesked_info = (u"\nder var også denne besked\n"
                             '"%s"\n' % adata[Abesked])
 
         else:
-            Abesked_txt = ""
-            Abesked_info = ""
+            Abesked_txt = u""
+            Abesked_info = u""
 
         Afoot_txt = u"""
 Den samlede betaling udgør kr. %s som skal indbetales 
@@ -553,9 +553,9 @@ Når vi kommer lidt tættere på stævnestart får du nærmere besked om diverse tidsp
 MVH fr. robot
 
 Du modtager dette brev fordi vi har modtaget en tilmelding på http://musikstaevner.dk, hvis dette skulle være en fejl må du meget gerne lade os det vide på tilmelding@musikstaevner.dk
-        """ % (adata[Pris] , Bbesked_txt)
+        """ % (adata[Pris] , Abesked_txt)
         
-        Afoot_info = "prisen er beregnet til %s\n%s\n-- \nMVH fr. robot\n" % (adata[Pris], Abesked_info)
+        Afoot_info = u"prisen er beregnet til %s\n%s\n-- \nMVH fr. robot\n" % (adata[Pris], Abesked_info)
 
         
         amessage = mail.EmailMessage(
@@ -633,7 +633,7 @@ Du modtager dette brev fordi vi har modtaget en tilmelding på http://musikstaevn
         
 
 
-application = webapp.WSGIApplication([FormHandler.mapping()], debug=True)
+application = webapp.WSGIApplication([FormHandler.mapping()], debug=False)
 
 def main():
     run_wsgi_app(application)
